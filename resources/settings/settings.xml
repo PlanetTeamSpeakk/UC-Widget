@@ -1,0 +1,73 @@
+<!DOCTYPE xml>
+<settings>
+
+	<setting propertyKey="@Properties.AppVersion" title="@Strings.AppVersionTitle">
+		<settingConfig type="alphaNumeric" readonly="true"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.Format" title="@Strings.FormatTitle" prompt="@Strings.FormatPrompt">
+		<settingConfig type="alphaNumeric"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.FirstDay" title="@Strings.FirstDayTitle" prompt="@Strings.FirstDayPrompt">
+		<settingConfig type="list">
+			<listEntry value="0">@Strings.Sunday</listEntry>
+			<listEntry value="1">@Strings.Monday</listEntry>
+		</settingConfig>
+	</setting>
+	
+	<setting propertyKey="@Properties.UpperText" title="@Strings.UpperTextTitle" prompt="@Strings.UpperTextPrompt">
+		<settingConfig type="alphaNumeric"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.DayOffset" title="@Strings.DayOffsetTitle" prompt="@Strings.DayOffsetTitle">
+		<settingConfig type="numeric"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.BackgroundColour" title="@Strings.BackgroundColourTitle">
+		<settingConfig type="list">
+			<listEntry value="0xFFFFFF">@Strings.ColourWhite</listEntry>
+			<listEntry value="0xAAAAAA">@Strings.ColourLtGrey</listEntry>
+			<listEntry value="0x555555">@Strings.ColourDkGrey</listEntry>
+			<listEntry value="0x000000">@Strings.ColourBlack</listEntry>
+			<listEntry value="0xFF0000">@Strings.ColourRed</listEntry>
+			<listEntry value="0xAA0000">@Strings.ColourDkRed</listEntry>
+			<listEntry value="0xFF5500">@Strings.ColourOrange</listEntry>
+			<listEntry value="0xFFAA00">@Strings.ColourYellow</listEntry>
+			<listEntry value="0x00FF00">@Strings.ColourGreen</listEntry>
+			<listEntry value="0x00AA00">@Strings.ColourDkGreen</listEntry>
+			<listEntry value="0x00AAFF">@Strings.ColourBlue</listEntry>
+			<listEntry value="0x0000FF">@Strings.ColourDkBlue</listEntry>
+			<listEntry value="0xAA00FF">@Strings.ColourPurple</listEntry>
+			<listEntry value="0xFF00FF">@Strings.ColourPink</listEntry>
+		</settingConfig>
+	</setting>
+	
+	<setting propertyKey="@Properties.CustomBackgroundColour" title="@Strings.CustomBackgroundColourTitle" prompt="@Strings.CustomBackgroundColourPrompt">
+		<settingConfig type="alphaNumeric"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.TextColour" title="@Strings.TextColourTitle">
+		<settingConfig type="list">
+			<listEntry value="0xFFFFFF">@Strings.ColourWhite</listEntry>
+			<listEntry value="0xAAAAAA">@Strings.ColourLtGrey</listEntry>
+			<listEntry value="0x555555">@Strings.ColourDkGrey</listEntry>
+			<listEntry value="0x000000">@Strings.ColourBlack</listEntry>
+			<listEntry value="0xFF0000">@Strings.ColourRed</listEntry>
+			<listEntry value="0xAA0000">@Strings.ColourDkRed</listEntry>
+			<listEntry value="0xFF5500">@Strings.ColourOrange</listEntry>
+			<listEntry value="0xFFAA00">@Strings.ColourYellow</listEntry>
+			<listEntry value="0x00FF00">@Strings.ColourGreen</listEntry>
+			<listEntry value="0x00AA00">@Strings.ColourDkGreen</listEntry>
+			<listEntry value="0x00AAFF">@Strings.ColourBlue</listEntry>
+			<listEntry value="0x0000FF">@Strings.ColourDkBlue</listEntry>
+			<listEntry value="0xAA00FF">@Strings.ColourPurple</listEntry>
+			<listEntry value="0xFF00FF">@Strings.ColourPink</listEntry>
+		</settingConfig>
+	</setting>
+	
+	<setting propertyKey="@Properties.CustomTextColour" title="@Strings.CustomTextColourTitle" prompt="@Strings.CustomTextColourPrompt">
+		<settingConfig type="alphaNumeric"/>
+	</setting>
+
+</settings>
