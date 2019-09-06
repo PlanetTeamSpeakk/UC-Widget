@@ -32,4 +32,15 @@
 	<string id="TextColourTitle"				>Text colour</string>
 	<string id="CustomTextColourTitle"			>Custom text colour</string>
 	<string id="CustomTextColourPrompt"			>Should be a hexadecimal number prefixed by either a pound sign (#), 0x or nothing. Example: #00FFAA</string>
+	<string id="ArcToggleTitle"					>Arc enabled</string>
+	<string id="ArcTogglePrompt"				>Whether the arc (glowing circle around the edge of the screen) should be drawn. Recommended only for round devices.</string>
+	<string id="ArcColourTitle"					>Arc colour</string>
+	<string id="CustomArcColourTitle"			>Custom arc colour</string>
+	<string id="CustomArcColourPrompt"			>Should be a hexadecimal number prefixed by either a pound sign (#), 0x or nothing. Example: #00FFAA</string>
+	<string id="ArcWidthTitle"					>Arc width</string>
+	<string id="ArcTypeTitle"					>Arc type</string>
+	<string id="ArcTypePrompt"					>The shape of the arc.</string>
+	<string id="ArcTypeAuto"					>Auto (depends on screen shape)</string>
+	<string id="ArcTypeRound"					>Round</string>
+	<string id="ArcTypeRect"					>Rectangular</string>
 </strings>

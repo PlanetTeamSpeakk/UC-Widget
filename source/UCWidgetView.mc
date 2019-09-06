@@ -9,11 +9,14 @@ using Toybox.Application;
 class UCWidgetView extends WatchUi.View {
 
 	static var instance = null;
-	var s = "";
-	var app = Application.getApp();
-	var init = false;
-	var backgroundColour = -1;
-	var textColour = -1;
+	hidden var s = "";
+	hidden var app = Application.getApp();
+	hidden var init = false;
+	hidden var arcEnabled = true;
+	hidden var backgroundColour = -1;
+	hidden var textColour = -1;
+	hidden var arcColour = -1;
+	hidden var arcType = 0;
 
     function initialize() {
     	instance = self;
@@ -21,23 +24,30 @@ class UCWidgetView extends WatchUi.View {
         	View.initialize();
         	init = true;
         }
-        if (app.getProperty("CustomBackgroundColour").length() != 0) {
-        	backgroundColour = stringToHexadecimalNumber(app.getProperty("CustomBackgroundColour"));
-        }
-        if (backgroundColour == -1 or backgroundColour == null) {
-        	backgroundColour = app.getProperty("BackgroundColour");
-        }
-        if (app.getProperty("CustomTextColour").length() != 0) {
-        	textColour = stringToHexadecimalNumber(app.getProperty("CustomTextColour"));
-        }
-        if (textColour == -1 or textColour == null) {
-        	textColour = app.getProperty("TextColour");
-        }
+        arcEnabled = app.getProperty("ArcToggle");
+        backgroundColour = loadColourProperty("CustomBackgroundColour", "BackgroundColour");
+        textColour = loadColourProperty("CustomTextColour", "TextColour");
+        arcColour = loadColourProperty("CustomArcColour", "ArcColour");
         if (app.getProperty("Format").length() == 0) {
         	app.setProperty("Format", "{WEEK}-{DAY_LETTER}");
         }
+        arcType = app.getProperty("ArcType");
+        if (arcType == 0) {
+        	arcType = arcType == System.SCREEN_SHAPE_RECTANGLE ? 2 : 1;
+        }
         s = format(app.getProperty("Format"));
         Sys.println("Done. " + app.getProperty("Format") + " => " + s);
+    }
+    
+    function loadColourProperty(name, fallback) {
+    	var colour = -1;
+    	if (app.getProperty(name).length() != 0) {
+        	colour = stringToHexadecimalNumber(app.getProperty(name));
+        }
+        if (colour == -1 or colour == null) {
+        	colour = app.getProperty(fallback);
+        }
+        return colour;
     }
     
     function stringToHexadecimalNumber(s) {
@@ -208,6 +218,10 @@ class UCWidgetView extends WatchUi.View {
     		return s;
     	}
     }
+    
+    function min(a, b) {
+    	return a > b ? b : a;
+    }
 
     // Load your resources here
     function onLayout(dc) {
@@ -226,9 +240,20 @@ class UCWidgetView extends WatchUi.View {
         if (app.getProperty("UpperText").length() == 0) {
         	app.setProperty("UpperText", "UC of {DAY_MONTH} {MONTH_SHORT} is:");
         }
-        var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
         dc.setColor(backgroundColour, backgroundColour);
         dc.fillRectangle(0, 0, dc.getWidth(), dc.getHeight());
+        if (arcEnabled) {
+        	System.println("Drawing arc");
+        	var arcWidth = app.getProperty("ArcWidth");
+        	dc.setColor(arcColour, Graphics.COLOR_TRANSPARENT);
+        	dc.setPenWidth(arcWidth);
+        	if (arcType == 1) {
+        		dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 - arcWidth / 2 + min(arcWidth / 4, 3), Graphics.ARC_CLOCKWISE, 0, 0);
+        	} else {
+        		dc.drawRectangle(0, 0, dc.getWidth(), dc.getHeight()); // Pfft, 'arc'.
+        	}
+        }
+        var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
         dc.setColor(textColour, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 - dc.getFontHeight(Graphics.FONT_SMALL) - 3, Graphics.FONT_SMALL, format(app.getProperty("UpperText")), Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_LARGE, s, Graphics.TEXT_JUSTIFY_CENTER);

@@ -69,5 +69,44 @@
 	<setting propertyKey="@Properties.CustomTextColour" title="@Strings.CustomTextColourTitle" prompt="@Strings.CustomTextColourPrompt">
 		<settingConfig type="alphaNumeric"/>
 	</setting>
+	
+	<setting propertyKey="@Properties.ArcToggle" title="@Strings.ArcToggleTitle" prompt="@Strings.ArcTogglePrompt">
+		<settingConfig type="boolean"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.ArcColour" title="@Strings.ArcColourTitle">
+		<settingConfig type="list">
+			<listEntry value="0xFFFFFF">@Strings.ColourWhite</listEntry>
+			<listEntry value="0xAAAAAA">@Strings.ColourLtGrey</listEntry>
+			<listEntry value="0x555555">@Strings.ColourDkGrey</listEntry>
+			<listEntry value="0x000000">@Strings.ColourBlack</listEntry>
+			<listEntry value="0xFF0000">@Strings.ColourRed</listEntry>
+			<listEntry value="0xAA0000">@Strings.ColourDkRed</listEntry>
+			<listEntry value="0xFF5500">@Strings.ColourOrange</listEntry>
+			<listEntry value="0xFFAA00">@Strings.ColourYellow</listEntry>
+			<listEntry value="0x00FF00">@Strings.ColourGreen</listEntry>
+			<listEntry value="0x00AA00">@Strings.ColourDkGreen</listEntry>
+			<listEntry value="0x00AAFF">@Strings.ColourBlue</listEntry>
+			<listEntry value="0x0000FF">@Strings.ColourDkBlue</listEntry>
+			<listEntry value="0xAA00FF">@Strings.ColourPurple</listEntry>
+			<listEntry value="0xFF00FF">@Strings.ColourPink</listEntry>
+		</settingConfig>
+	</setting>
+	
+	<setting propertyKey="@Properties.CustomArcColour" title="@Strings.CustomArcColourTitle" prompt="@Strings.CustomArcColourPrompt">
+		<settingConfig type="alphaNumeric"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.ArcWidth" title="@Strings.ArcWidthTitle">
+		<settingConfig type="numeric" min="0"/>
+	</setting>
+	
+	<setting propertyKey="@Properties.ArcType" title="@Strings.ArcTypeTitle" prompt="@Strings.ArcTypePrompt">
+		<settingConfig type="list">
+			<listEntry value="0">@Strings.ArcTypeAuto</listEntry>
+			<listEntry value="1">@Strings.ArcTypeRound</listEntry>
+			<listEntry value="2">@Strings.ArcTypeRect</listEntry>
+		</settingConfig>
+	</setting>
 
 </settings>

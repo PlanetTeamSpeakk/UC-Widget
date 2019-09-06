@@ -1,6 +1,6 @@
 <!DOCTYPE xml>
 <properties>
-	<property id="AppVersion" type="string">1.2.0</property>
+	<property id="AppVersion" type="string">1.3.0</property>
 	<property id="Format" type="string">{WEEK}-{DAY_LETTER}</property>
 	<property id="FirstDay" type="number">1</property>
 	<property id="UpperText" type="string">UC of {DAY_MONTH} {MONTH_SHORT} is:</property>
@@ -9,4 +9,9 @@
 	<property id="CustomBackgroundColour" type="string"></property>
 	<property id="TextColour" type="number">0xFFFFFF</property> <!-- white -->
 	<property id="CustomTextColour" type="string"></property>
+	<property id="ArcToggle" type="boolean">true</property>
+	<property id="ArcColour" type="number">0x00AAFF</property> <!-- blue -->
+	<property id="CustomArcColour" type="string"></property>
+	<property id="ArcWidth" type="number">5</property>
+	<property id="ArcType" type="number">0</property>
  </properties>
