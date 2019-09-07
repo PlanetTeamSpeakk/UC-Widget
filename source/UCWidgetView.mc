@@ -33,7 +33,7 @@ class UCWidgetView extends WatchUi.View {
         }
         arcType = app.getProperty("ArcType");
         if (arcType == 0) {
-        	arcType = arcType == System.SCREEN_SHAPE_RECTANGLE ? 2 : 1;
+        	arcType = System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_RECTANGLE ? 3 : System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_SEMI_ROUND ? 2 : 1;
         }
         s = format(app.getProperty("Format"));
         Sys.println("Done. " + app.getProperty("Format") + " => " + s);
@@ -100,7 +100,7 @@ class UCWidgetView extends WatchUi.View {
     	var weekDay = info.day_of_week - 1;
     	if (app.getProperty("FirstDay") == 1) {
     		weekDay -= 1;
-	    	if (weekDay == 0) {
+	    	if (weekDay == -1) {
 	    		weekDay = 6;
 	    	}
     	}
@@ -247,10 +247,12 @@ class UCWidgetView extends WatchUi.View {
         	var arcWidth = app.getProperty("ArcWidth");
         	dc.setColor(arcColour, Graphics.COLOR_TRANSPARENT);
         	dc.setPenWidth(arcWidth);
-        	if (arcType == 1) {
-        		dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 - arcWidth / 2 + min(arcWidth / 4, 3), Graphics.ARC_CLOCKWISE, 0, 0);
-        	} else {
-        		dc.drawRectangle(0, 0, dc.getWidth(), dc.getHeight()); // Pfft, 'arc'.
+        	var i = min(arcWidth / 4, 3);
+        	if (arcType != 3) {
+        		dc.drawArc(dc.getWidth() / 2, dc.getHeight() / 2, dc.getWidth() / 2 - arcWidth / 2 + i, Graphics.ARC_CLOCKWISE, 0, 0);
+        	} // A combination of these two creates the semi-round one.
+        	if (arcType != 1) {
+        		dc.drawRectangle(i, i, dc.getWidth() - i * 2, dc.getHeight() - i * 2); // Pfft, 'arc'.
         	}
         }
         var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);

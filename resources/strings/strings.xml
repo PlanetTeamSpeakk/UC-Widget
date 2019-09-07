@@ -42,5 +42,6 @@
 	<string id="ArcTypePrompt"					>The shape of the arc.</string>
 	<string id="ArcTypeAuto"					>Auto (depends on screen shape)</string>
 	<string id="ArcTypeRound"					>Round</string>
+	<string id="ArcTypeSemiRound"				>Semi-round (round with a cutout on top and bottom, e.g. Forerunner 235)</string>
 	<string id="ArcTypeRect"					>Rectangular</string>
 </strings>
