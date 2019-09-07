@@ -20,7 +20,7 @@
 		<settingConfig type="alphaNumeric"/>
 	</setting>
 	
-	<setting propertyKey="@Properties.DayOffset" title="@Strings.DayOffsetTitle" prompt="@Strings.DayOffsetTitle">
+	<setting propertyKey="@Properties.DayOffset" title="@Strings.DayOffsetTitle" prompt="@Strings.DayOffsetPrompt">
 		<settingConfig type="numeric"/>
 	</setting>
 	
@@ -105,7 +105,8 @@
 		<settingConfig type="list">
 			<listEntry value="0">@Strings.ArcTypeAuto</listEntry>
 			<listEntry value="1">@Strings.ArcTypeRound</listEntry>
-			<listEntry value="2">@Strings.ArcTypeRect</listEntry>
+			<listEntry value="2">@Strings.ArcTypeSemiRound</listEntry>
+			<listEntry value="3">@Strings.ArcTypeRect</listEntry>
 		</settingConfig>
 	</setting>
 
