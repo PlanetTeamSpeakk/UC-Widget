@@ -9,7 +9,13 @@ using Toybox.Application;
 class UCWidgetView extends WatchUi.View {
 
 	static var instance = null;
-	hidden var s = "";
+	hidden var width = -1;
+	hidden var height = -1;
+	var drawArrows = false;
+	var secondaryDaysOffset = 0;
+	var uc = "";
+	hidden var arrowUp = null;
+	hidden var arrowDown = null;
 	hidden var app = Application.getApp();
 	hidden var init = false;
 	hidden var arcEnabled = true;
@@ -24,6 +30,8 @@ class UCWidgetView extends WatchUi.View {
         	View.initialize();
         	init = true;
         }
+        width = System.getDeviceSettings().screenWidth;
+        height = System.getDeviceSettings().screenHeight;
         arcEnabled = app.getProperty("ArcToggle");
         backgroundColour = loadColourProperty("CustomBackgroundColour", "BackgroundColour");
         textColour = loadColourProperty("CustomTextColour", "TextColour");
@@ -35,8 +43,16 @@ class UCWidgetView extends WatchUi.View {
         if (arcType == 0) {
         	arcType = System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_RECTANGLE ? 3 : System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_SEMI_ROUND ? 2 : 1;
         }
-        s = format(app.getProperty("Format"));
-        Sys.println("Done. " + app.getProperty("Format") + " => " + s);
+        uc = format(app.getProperty("Format"));
+        Sys.println("Done. " + app.getProperty("Format") + " => " + uc);
+    }
+    
+    function getWidth() {
+    	return width;
+    }
+    
+    function getHeight() {
+    	return height;
     }
     
     function loadColourProperty(name, fallback) {
@@ -59,13 +75,28 @@ class UCWidgetView extends WatchUi.View {
     	return ("0x" + s.substring(0, 6)).toNumberWithBase(16);
     }
     
+    function up() {
+    	Sys.println("Up " + uc);
+    	secondaryDaysOffset += 1;
+    	resetUC();
+    	WatchUi.requestUpdate();
+    }
+    
+    function down() {
+    	Sys.println("Down");
+    	secondaryDaysOffset -= 1;
+    	resetUC();
+    	WatchUi.requestUpdate();
+    }
+    
+    function resetUC() {
+    	uc = format(Application.getApp().getProperty("Format"));
+    }
+    
     function format(format) {
-		Sys.println("Getting time info.");
-		var moment = Time.now().add(new Time.Duration(86400 * app.getProperty("DayOffset")));
+    	var moment = Time.now().add(new Time.Duration(86400 * (app.getProperty("DayOffset") + secondaryDaysOffset)));
     	var info = Gregorian.info(moment, Time.FORMAT_SHORT);
-    	Sys.println(moment.value());
     	var days = 0;
-    	Sys.println("Calculating days.");
     	switch (info.month - 1) {
     	case 11:
     		days += 30;
@@ -90,12 +121,10 @@ class UCWidgetView extends WatchUi.View {
     	case 1:
     		days += 31;
     	}
-    	Sys.println("Checking leap year.");
     	if (info.year % 4 == 0 and info.month > 2) {
     		days += 1;
     	}
     	days += info.day;
-    	Sys.println(days);
     	var week = Math.floor(days / 7) + 1;
     	var weekDay = info.day_of_week - 1;
     	if (app.getProperty("FirstDay") == 1) {
@@ -112,7 +141,6 @@ class UCWidgetView extends WatchUi.View {
     	daysArray[4] = "E";
     	daysArray[5] = "F";
     	daysArray[6] = "G";
-    	Sys.println("Formatting.");
     	return replaceAllDict(format, {
     		"{WEEK}" => week,
     		"{DAY_LETTER}" => daysArray[weekDay],
@@ -121,9 +149,9 @@ class UCWidgetView extends WatchUi.View {
     		"{YEAR}" => info.year,
     		"{YEAR_SHORT}" => info.year % 100,
     		"{MONTH_NO}" => info.month,
-    		"{MONTH_SHORT}" => Gregorian.info(Time.now(), Time.FORMAT_MEDIUM).month,
-    		"{MONTH_LONG}" => Gregorian.info(Time.now(), Time.FORMAT_LONG).month,
-    		"{TIME_EPOCH}" => Time.now().value(),
+    		"{MONTH_SHORT}" => Gregorian.info(moment, Time.FORMAT_MEDIUM).month,
+    		"{MONTH_LONG}" => Gregorian.info(moment, Time.FORMAT_LONG).month,
+    		"{TIME_EPOCH}" => moment.value(),
     		"{TIME_24H}" => formatTime(Time.now(), false),
     		"{TIME_12H}" => formatTime(Time.now(), true)
     	}, true);
@@ -222,6 +250,19 @@ class UCWidgetView extends WatchUi.View {
     function min(a, b) {
     	return a > b ? b : a;
     }
+    
+    function loadArrows(width, height) {
+    	arrowUp = new WatchUi.Bitmap({
+            :rezId=>Rez.Drawables.ArrowUp,
+            :locX=>width/2-10,
+            :locY=>7
+        });
+        arrowDown = new WatchUi.Bitmap({
+            :rezId=>Rez.Drawables.ArrowDown,
+            :locX=>width/2-10,
+            :locY=>height-17
+        });
+    }
 
     // Load your resources here
     function onLayout(dc) {
@@ -237,13 +278,17 @@ class UCWidgetView extends WatchUi.View {
     function onUpdate(dc) {
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
+        width = dc.getWidth();
+        height = dc.getHeight();
+        if (arrowUp == null or arrowDown == null) {
+        	loadArrows(dc.getWidth(), dc.getHeight());
+        }
         if (app.getProperty("UpperText").length() == 0) {
         	app.setProperty("UpperText", "UC of {DAY_MONTH} {MONTH_SHORT} is:");
         }
         dc.setColor(backgroundColour, backgroundColour);
         dc.fillRectangle(0, 0, dc.getWidth(), dc.getHeight());
         if (arcEnabled) {
-        	System.println("Drawing arc");
         	var arcWidth = app.getProperty("ArcWidth");
         	dc.setColor(arcColour, Graphics.COLOR_TRANSPARENT);
         	dc.setPenWidth(arcWidth);
@@ -258,14 +303,23 @@ class UCWidgetView extends WatchUi.View {
         var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
         dc.setColor(textColour, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 - dc.getFontHeight(Graphics.FONT_SMALL) - 3, Graphics.FONT_SMALL, format(app.getProperty("UpperText")), Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_LARGE, s, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_LARGE, uc, Graphics.TEXT_JUSTIFY_CENTER);
         if (app.getProperty("DayOffset") != 0) {
         	var s = app.getProperty("DayOffset").toString();
         	if (s.toNumber() > 0) {
         		s = "+" + s;
         	}
-        	dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 - dc.getFontHeight(Graphics.FONT_SMALL) * 3 - 6, Graphics.FONT_SMALL, s, Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 - dc.getFontHeight(Graphics.FONT_SMALL) * 3 + 12, Graphics.FONT_SMALL, s, Graphics.TEXT_JUSTIFY_CENTER);
         }
+        if (drawArrows) {
+        	var arrowBgHeight = 24;
+        	dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+        	dc.fillRectangle(0, 0, dc.getWidth(), arrowBgHeight);
+        	arrowUp.draw(dc);
+        	dc.fillRectangle(0, dc.getHeight()-arrowBgHeight, dc.getWidth(), arrowBgHeight);
+        	arrowDown.draw(dc);
+        }
+        System.println("Screen updated");
     }
 
     // Called when this View is removed from the screen. Save the

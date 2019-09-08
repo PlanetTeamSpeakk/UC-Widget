@@ -1,3 +1,6 @@
+<!DOCTYPE xml>
 <drawables>
-    <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="LauncherIcon" filename="launcher_icon.png"/>
+    <bitmap id="ArrowUp" filename = "arrow_up.png"/>
+    <bitmap id="ArrowDown" filename = "arrow_down.png"/>
 </drawables>

@@ -18,7 +18,7 @@ class UCWidgetApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        return [ new UCWidgetView() ];
+        return [new UCWidgetView(), new UCWidgetBehaviourDelegate()];
     }
     
     function onSettingsChanged() {
