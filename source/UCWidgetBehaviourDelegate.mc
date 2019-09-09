@@ -5,7 +5,9 @@ using Toybox.Application;
 class UCWidgetBehaviourDelegate extends WatchUi.BehaviorDelegate {
 
 	static var instance = null;
-	hidden var consuming = false;
+	var consumed = false;
+	var noPop = false;
+	var consuming = false;
 
 	function initialize() {
 		BehaviorDelegate.initialize();
@@ -36,9 +38,9 @@ class UCWidgetBehaviourDelegate extends WatchUi.BehaviorDelegate {
 	
 	function onTap(click) {
 		Sys.println("Tap: " + click.getCoordinates() + ", type: " + click.getType());
-		if (click.getCoordinates()[1] <= 24 and consuming) {
+		if (click.getCoordinates()[1] <= 48 and consuming) {
 			UCWidgetView.instance.up();
-		} else if (click.getCoordinates()[1] >= UCWidgetView.instance.getHeight() - 24 and consuming) {
+		} else if (click.getCoordinates()[1] >= UCWidgetView.instance.getHeight() - 48 and consuming) {
 			UCWidgetView.instance.down();
 		} else {
 			consume();
@@ -48,7 +50,11 @@ class UCWidgetBehaviourDelegate extends WatchUi.BehaviorDelegate {
 	function consume() {
 		Sys.println("Consuming: " + !consuming);
 		if (consuming) {
-			WatchUi.popView(WatchUi.SLIDE_DOWN);
+			if (!noPop) {
+				WatchUi.popView(WatchUi.SLIDE_DOWN);
+			}
+			consumed = true;
+			noPop = false;
 		} else {
 			WatchUi.pushView(UCWidgetView.instance, self, WatchUi.SLIDE_UP);
 		}

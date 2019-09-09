@@ -109,5 +109,28 @@
 			<listEntry value="3">@Strings.ArcTypeRect</listEntry>
 		</settingConfig>
 	</setting>
+	
+		<setting propertyKey="@Properties.ButtonBackgroundColour" title="@Strings.ButtonBackgroundColourTitle">
+		<settingConfig type="list">
+			<listEntry value="0xFFFFFF">@Strings.ColourWhite</listEntry>
+			<listEntry value="0xAAAAAA">@Strings.ColourLtGrey</listEntry>
+			<listEntry value="0x555555">@Strings.ColourDkGrey</listEntry>
+			<listEntry value="0x000000">@Strings.ColourBlack</listEntry>
+			<listEntry value="0xFF0000">@Strings.ColourRed</listEntry>
+			<listEntry value="0xAA0000">@Strings.ColourDkRed</listEntry>
+			<listEntry value="0xFF5500">@Strings.ColourOrange</listEntry>
+			<listEntry value="0xFFAA00">@Strings.ColourYellow</listEntry>
+			<listEntry value="0x00FF00">@Strings.ColourGreen</listEntry>
+			<listEntry value="0x00AA00">@Strings.ColourDkGreen</listEntry>
+			<listEntry value="0x00AAFF">@Strings.ColourBlue</listEntry>
+			<listEntry value="0x0000FF">@Strings.ColourDkBlue</listEntry>
+			<listEntry value="0xAA00FF">@Strings.ColourPurple</listEntry>
+			<listEntry value="0xFF00FF">@Strings.ColourPink</listEntry>
+		</settingConfig>
+	</setting>
+	
+	<setting propertyKey="@Properties.CustomButtonBackgroundColour" title="@Strings.CustomButtonBackgroundColourTitle" prompt="@Strings.CustomButtonBackgroundColourPrompt">
+		<settingConfig type="alphaNumeric"/>
+	</setting>
 
 </settings>

@@ -9,11 +9,13 @@ using Toybox.Application;
 class UCWidgetView extends WatchUi.View {
 
 	static var instance = null;
+	hidden var hideCount = 0;
 	hidden var width = -1;
 	hidden var height = -1;
 	var drawArrows = false;
 	var secondaryDaysOffset = 0;
 	var uc = "";
+	hidden var arrowButtonHeight = 36;
 	hidden var arrowUp = null;
 	hidden var arrowDown = null;
 	hidden var app = Application.getApp();
@@ -23,6 +25,7 @@ class UCWidgetView extends WatchUi.View {
 	hidden var textColour = -1;
 	hidden var arcColour = -1;
 	hidden var arcType = 0;
+	hidden var buttonBackgroundColour = -1;
 
     function initialize() {
     	instance = self;
@@ -36,6 +39,7 @@ class UCWidgetView extends WatchUi.View {
         backgroundColour = loadColourProperty("CustomBackgroundColour", "BackgroundColour");
         textColour = loadColourProperty("CustomTextColour", "TextColour");
         arcColour = loadColourProperty("CustomArcColour", "ArcColour");
+        buttonBackgroundColour = loadColourProperty("CustomButtonBackgroundColour", "ButtonBackgroundColour");
         if (app.getProperty("Format").length() == 0) {
         	app.setProperty("Format", "{WEEK}-{DAY_LETTER}");
         }
@@ -255,12 +259,12 @@ class UCWidgetView extends WatchUi.View {
     	arrowUp = new WatchUi.Bitmap({
             :rezId=>Rez.Drawables.ArrowUp,
             :locX=>width/2-10,
-            :locY=>7
+            :locY=>arrowButtonHeight/2-5
         });
         arrowDown = new WatchUi.Bitmap({
             :rezId=>Rez.Drawables.ArrowDown,
             :locX=>width/2-10,
-            :locY=>height-17
+            :locY=>height+(arrowButtonHeight/2-41)
         });
     }
 
@@ -312,11 +316,10 @@ class UCWidgetView extends WatchUi.View {
         	dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 - dc.getFontHeight(Graphics.FONT_SMALL) * 3 + 12, Graphics.FONT_SMALL, s, Graphics.TEXT_JUSTIFY_CENTER);
         }
         if (drawArrows) {
-        	var arrowBgHeight = 24;
-        	dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-        	dc.fillRectangle(0, 0, dc.getWidth(), arrowBgHeight);
+        	dc.setColor(buttonBackgroundColour, Graphics.COLOR_TRANSPARENT);
+        	dc.fillRectangle(0, 0, dc.getWidth(), arrowButtonHeight);
         	arrowUp.draw(dc);
-        	dc.fillRectangle(0, dc.getHeight()-arrowBgHeight, dc.getWidth(), arrowBgHeight);
+        	dc.fillRectangle(0, dc.getHeight()-arrowButtonHeight, dc.getWidth(), arrowButtonHeight);
         	arrowDown.draw(dc);
         }
         System.println("Screen updated");
@@ -326,6 +329,15 @@ class UCWidgetView extends WatchUi.View {
     // state of this View here. This includes freeing resources from
     // memory.
     function onHide() {
+    	hideCount += 1;
+    	Sys.println("Hide count: " + hideCount);
+    	if (!UCWidgetBehaviourDelegate.instance.consumed && hideCount % 2 == 0) {
+    		drawArrows = false;
+    		UCWidgetBehaviourDelegate.instance.noPop = true;
+    		UCWidgetBehaviourDelegate.instance.consuming = false;
+    		resetUC();
+    	}
+    	UCWidgetBehaviourDelegate.instance.consumed = false;
     }
 
 }
