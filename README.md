@@ -1,4 +1,10 @@
 # UC-Widget
+1. [Description](#description)
+2. [Customising settings](#customising-settings)
+3. [Formats](#formats)
+4. [Default values](#default-values)
+
+## Description
 UCs are codes used in the Netherlands (for a fact, not sure about other countries) by supermarkets to tell the stock clerks when to remove a product from the store. It is basically the same as a date, but not meant to be understood by the average customer.
 
 This widget is supposed to help stock clerks find out what today's UC is to make sure they remove the right products and not newer ones.
@@ -7,6 +13,7 @@ UC stands for 'Uithaal Code' which translates to removal code which is self expl
 
 Supposedly supports all devices running Connect IQ 2.4+
 
+## Customising settings
 Since it may be a bit confusing for people who just got their Garmin device (like me, I got mine 2 weeks before writing this and had this problem), you may not have a clue where you can change settings of watch faces, apps, widgets and data fields, so I shall tell you now where to find it.
 
 1. Open the Garmin Connect app.
@@ -16,6 +23,7 @@ Since it may be a bit confusing for people who just got their Garmin device (lik
 5. Select the widget/watch face/ data field/app you want to customise.
 6. If the app has settings, a settings button should appear below the 'View in store' button, click it and edit anything to your liking.
 
+## Formats
 The formats you can use that will be changed to current values are as follows:
 - {WEEK} The current week number.
 - {DAY_LETTER} The letter corresponding to the day number.
@@ -30,4 +38,19 @@ The formats you can use that will be changed to current values are as follows:
 - {TIME_24H} The current time showing hours and minutes in HH:MM 24 hour format.
 - {TIME_12H} The current time showing hours and minutes in HH:MM AM/PM 12 hour format.
 
-The default format is {WEEK}-{DAY_LETTER} which results in e.g. 36-D on 5 September.
+## Default values
+For the most accurate and newest default values, take a look at `properties.xml` in `resources/settings`. If that is too confusing for you, here are the default values as of version 1.4.3:
+- **Format**: {WEEK}-{DAY_LETTER}
+- **First day**: Monday
+- **Upper text format**: `UC of {DAY_MONTH} {MONTH_SHORT} is:`
+- **Day offset**: 0
+- **Background colour**: Black
+- **Custom background colour**: 
+- **Text colour**: White
+- **Custom text colour**:
+- **Arc enabled**: `true`
+- **Arc colour**: Blue
+- **Custom arc colour**: 
+- **Arc type**: Auto
+- **Arrow button background colour**: Light grey
+- **Custom arrow button background colour**:
