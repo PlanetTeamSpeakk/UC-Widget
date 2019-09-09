@@ -333,8 +333,9 @@ class UCWidgetView extends WatchUi.View {
     	Sys.println("Hide count: " + hideCount);
     	if (!UCWidgetBehaviourDelegate.instance.consumed && hideCount % 2 == 0) {
     		drawArrows = false;
-    		UCWidgetBehaviourDelegate.instance.noPop = true;
+    		//UCWidgetBehaviourDelegate.instance.noPop = true;
     		UCWidgetBehaviourDelegate.instance.consuming = false;
+    		secondaryDaysOffset = 0;
     		resetUC();
     	}
     	UCWidgetBehaviourDelegate.instance.consumed = false;

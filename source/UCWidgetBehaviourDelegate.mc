@@ -48,7 +48,7 @@ class UCWidgetBehaviourDelegate extends WatchUi.BehaviorDelegate {
 	}
 	
 	function consume() {
-		Sys.println("Consuming: " + !consuming);
+		Sys.println("Consuming: " + consuming + " nopop: " + noPop);
 		if (consuming) {
 			if (!noPop) {
 				WatchUi.popView(WatchUi.SLIDE_DOWN);
