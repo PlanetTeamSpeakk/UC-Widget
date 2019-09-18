@@ -1,6 +1,6 @@
 <!DOCTYPE xml>
 <properties>
-	<property id="AppVersion" type="string">1.4.4</property>
+	<property id="AppVersion" type="string">1.5.0</property>
 	<property id="Format" type="string">{WEEK}-{DAY_LETTER}</property>
 	<property id="FirstDay" type="number">1</property>
 	<property id="UpperText" type="string">UC of {DAY_MONTH} {MONTH_SHORT} is:</property>

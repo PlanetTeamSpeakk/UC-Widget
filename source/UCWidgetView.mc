@@ -9,13 +9,24 @@ using Toybox.Application;
 class UCWidgetView extends WatchUi.View {
 
 	static var instance = null;
+	static const btnWidth = 30;
+    static const btnHeight = 40;
+	static const arrowButtonHeight = 36;
 	hidden var hideCount = 0;
 	hidden var width = -1;
 	hidden var height = -1;
 	var drawArrows = false;
 	var secondaryDaysOffset = 0;
+	var weekOffset = 0;
+	var dayNo = -1;
+	var btn0X = -1;
+	var btn1X = -1;
+	var btn2X = -1;
+	var btn3X = -1;
+	var upperBtnY = -1;
+	var lowerBtnY = -1;
 	var uc = "";
-	hidden var arrowButtonHeight = 36;
+	var momentOffset = 0;
 	hidden var arrowUp = null;
 	hidden var arrowDown = null;
 	hidden var app = Application.getApp();
@@ -28,9 +39,9 @@ class UCWidgetView extends WatchUi.View {
 	hidden var buttonBackgroundColour = -1;
 
     function initialize() {
-    	instance = self;
+    	View.initialize();
         if (!init) {
-        	View.initialize();
+        	instance = self;
         	init = true;
         }
         width = System.getDeviceSettings().screenWidth;
@@ -80,25 +91,58 @@ class UCWidgetView extends WatchUi.View {
     }
     
     function up() {
-    	Sys.println("Up " + uc);
     	secondaryDaysOffset += 1;
-    	resetUC();
-    	WatchUi.requestUpdate();
+    	resetAndUpdate();
     }
     
     function down() {
-    	Sys.println("Down");
     	secondaryDaysOffset -= 1;
-    	resetUC();
-    	WatchUi.requestUpdate();
+    	resetAndUpdate();
     }
     
+    function weekUp() {
+    	weekOffset += 1;
+    	resetAndUpdate();
+    }
+    
+    function weekDown() {
+    	weekOffset -= 1;
+    	resetAndUpdate();
+    }
+    
+    function dayUp() {
+    	dayNo += 1;
+    	dayNo -= dayNo > 6 ? 7 : 0;
+    	calcMomentOffset();
+    	resetAndUpdate();
+    }
+    
+    function dayDown() {
+    	dayNo -= 1;
+    	dayNo += dayNo < 0 ? 7 : 0;
+    	calcMomentOffset();
+    	resetAndUpdate();
+    }
+    
+    function calcMomentOffset() {
+    	momentOffset = dayNo == -1 ? 0 : (dayNo - getWeekDay(Gregorian.info(getMoment(false), Time.FORMAT_SHORT))) * 86400;
+    }
+        
     function resetUC() {
     	uc = format(Application.getApp().getProperty("Format"));
     }
     
+    function resetAndUpdate() {
+    	resetUC();
+    	WatchUi.requestUpdate();
+    }
+    
+    function getMoment(addMomentOffset) {
+    	return Time.now().add(new Time.Duration(86400 * (app.getProperty("DayOffset") + secondaryDaysOffset) + 604800 * weekOffset + (addMomentOffset ? momentOffset : 0)));
+    }
+    
     function format(format) {
-    	var moment = Time.now().add(new Time.Duration(86400 * (app.getProperty("DayOffset") + secondaryDaysOffset)));
+    	var moment = getMoment(true);
     	var info = Gregorian.info(moment, Time.FORMAT_SHORT);
     	var days = 0;
     	switch (info.month - 1) {
@@ -129,14 +173,8 @@ class UCWidgetView extends WatchUi.View {
     		days += 1;
     	}
     	days += info.day;
-    	var week = Math.floor(days / 7) + 1;
-    	var weekDay = info.day_of_week - 1;
-    	if (app.getProperty("FirstDay") == 1) {
-    		weekDay -= 1;
-	    	if (weekDay == -1) {
-	    		weekDay = 6;
-	    	}
-    	}
+    	var week = getWeekNumber(moment);
+    	var weekDay = getWeekDay(info);
     	var daysArray = new [7];
     	daysArray[0] = "A";
     	daysArray[1] = "B";
@@ -160,6 +198,48 @@ class UCWidgetView extends WatchUi.View {
     		"{TIME_12H}" => formatTime(Time.now(), true)
     	}, true);
     }
+    
+    function getWeekDay(info) {
+    	var weekDay = info.day_of_week - 1;
+    	if (app.getProperty("FirstDay") == 1) {
+    		weekDay -= 1;
+    	}
+    	return weekDay == -1 ? 6 : weekDay;
+    }
+    
+    function yearToSeconds(year) {
+    	year -= 1970;
+    	var s = year * 365 * 86400;
+    	s += Math.floor(year / 4) * 86400;
+    	return s;
+    }
+    
+    function getWeekNumber(moment) {
+		var newYear = Gregorian.moment({
+					:year => Gregorian.info(moment, Time.FORMAT_SHORT).year, 
+					:month => 1, 
+					:day => 1
+				});
+		var day = getWeekDay(Gregorian.info(newYear, Time.FORMAT_SHORT));
+		var daynum = Math.floor((moment.value() - newYear.value())/86400) + 1;
+		var weeknum = 0;
+		if (day < 4) {
+			weeknum = Math.floor((daynum+day-1)/7) + 1;
+			if (weeknum > 52) {
+				var nYear = Gregorian.info(Gregorian.moment({
+					:year => Gregorian.info(moment, Time.FORMAT_SHORT).year, 
+					:month => 1, 
+					:day => 1
+				}), Time.FORMAT_SHORT);
+				var nday = nYear.day;
+				nday = nday >= 0 ? nday : nday + 7;
+				weeknum = nday < 4 ? 1 : 53;
+			}
+		} else {
+			weeknum = Math.floor((daynum+day-1)/7);
+		}
+		return weeknum;
+	}
     
     function formatTime(moment, meridiem) {
     	if (moment instanceof Time.Moment) {
@@ -304,7 +384,6 @@ class UCWidgetView extends WatchUi.View {
         		dc.drawRectangle(i, i, dc.getWidth() - i * 2, dc.getHeight() - i * 2); // Pfft, 'arc'.
         	}
         }
-        var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
         dc.setColor(textColour, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2 - dc.getFontHeight(Graphics.FONT_SMALL) - 3, Graphics.FONT_SMALL, format(app.getProperty("UpperText")), Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Graphics.FONT_LARGE, uc, Graphics.TEXT_JUSTIFY_CENTER);
@@ -321,6 +400,45 @@ class UCWidgetView extends WatchUi.View {
         	arrowUp.draw(dc);
         	dc.fillRectangle(0, dc.getHeight()-arrowButtonHeight, dc.getWidth(), arrowButtonHeight);
         	arrowDown.draw(dc);
+        	
+        	var fHeight  = dc.getFontHeight(Graphics.FONT_XTINY);
+        	var fHeight1 = dc.getFontHeight(Graphics.FONT_MEDIUM);
+        	var fHeight2 = dc.getFontHeight(Graphics.FONT_LARGE);
+        	btn0X = width / 2 - dc.getTextDimensions("Week:", Graphics.FONT_XTINY)[0] / 2;
+        	btn1X = width / 2 + dc.getTextDimensions("Week:", Graphics.FONT_XTINY)[0] / 2;
+        	upperBtnY = fHeight * 2 + btnHeight / 2;
+        	
+        	dc.setColor(buttonBackgroundColour, Graphics.COLOR_TRANSPARENT);
+        	dc.fillEllipse(btn0X - btnWidth / 2 - 2, upperBtnY, btnWidth / 2, btnHeight / 2);
+        	dc.fillEllipse(btn1X + btnWidth / 2 + 2, upperBtnY, btnWidth / 2, btnHeight / 2);
+        	dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        	dc.drawText(btn0X - btnWidth / 2 - 2, upperBtnY - fHeight1 / 2 - 2, Graphics.FONT_MEDIUM, "-", Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(btn1X + btnWidth / 2 + 2, upperBtnY - fHeight1 / 2 - 2, Graphics.FONT_MEDIUM, "+", Graphics.TEXT_JUSTIFY_CENTER);
+        	
+        	btn0X -= btnWidth - 2;
+        	btn1X += 2;
+        	upperBtnY -= btnHeight / 2;
+        	btn2X = width / 2 - dc.getTextDimensions("Day:", Graphics.FONT_XTINY)[0] / 2;
+        	btn3X = width / 2 + dc.getTextDimensions("Day:", Graphics.FONT_XTINY)[0] / 2;
+        	var offset = height - arrowButtonHeight;
+        	lowerBtnY = offset - fHeight * 2 + btnHeight / 2;
+        	
+        	dc.setColor(buttonBackgroundColour, Graphics.COLOR_TRANSPARENT);
+        	dc.fillEllipse(btn2X - btnWidth / 2 - 2, lowerBtnY, btnWidth / 2, btnHeight / 2);
+        	dc.fillEllipse(btn3X + btnWidth / 2 + 2, lowerBtnY, btnWidth / 2, btnHeight / 2);
+        	dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        	dc.drawText(btn2X - btnWidth / 2 - 2, offset - (fHeight * 2 + btnHeight / 2 - fHeight1 / 2 - 4), Graphics.FONT_MEDIUM, "-", Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(btn3X + btnWidth / 2 + 2, offset - (fHeight * 2 + btnHeight / 2 - fHeight1 / 2 - 4), Graphics.FONT_MEDIUM, "+", Graphics.TEXT_JUSTIFY_CENTER);
+        	lowerBtnY -= btnHeight / 2;
+        	
+        	btn2X -= btnWidth - 2;
+        	btn3X += 2;
+        	
+        	dc.setColor(textColour, Graphics.COLOR_TRANSPARENT);
+        	dc.drawText(width / 2, fHeight * 2, Graphics.FONT_XTINY, "Week:", Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(width / 2, fHeight * 3, Graphics.FONT_XTINY, format("{WEEK}"), Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(width / 2, height - arrowButtonHeight - fHeight * 4 + fHeight2 + 4, Graphics.FONT_XTINY, "Day:", Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(width / 2, height - arrowButtonHeight - fHeight * 3 + fHeight2 + 4, Graphics.FONT_XTINY, format("{DAY_LETTER}"), Graphics.TEXT_JUSTIFY_CENTER);
         }
         System.println("Screen updated");
     }
@@ -332,11 +450,7 @@ class UCWidgetView extends WatchUi.View {
     	hideCount += 1;
     	Sys.println("Hide count: " + hideCount);
     	if (!UCWidgetBehaviourDelegate.instance.consumed && hideCount % 2 == 0) {
-    		drawArrows = false;
-    		//UCWidgetBehaviourDelegate.instance.noPop = true;
-    		UCWidgetBehaviourDelegate.instance.consuming = false;
-    		secondaryDaysOffset = 0;
-    		resetUC();
+    		UCWidgetBehaviourDelegate.instance.consume(true);
     	}
     	UCWidgetBehaviourDelegate.instance.consumed = false;
     }

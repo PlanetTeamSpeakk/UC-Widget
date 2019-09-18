@@ -23,7 +23,7 @@ class UCWidgetApp extends Application.AppBase {
     
     function onSettingsChanged() {
     	Sys.println("Settings changed, updating!");
-		UCWidgetView.instance.initialize(); 	
+		UCWidgetView.instance.initialize();
     	WatchUi.requestUpdate();
     }
 
